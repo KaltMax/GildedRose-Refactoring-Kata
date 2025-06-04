@@ -78,5 +78,59 @@ public class GildedRoseTest
         }
     }
 
+    [Test]
+    public void QualityShouldNeverExceedFifty()
+    {
+        // Arrange: Set Bries quality to 49
+        var brie = _items[1];
+        brie.Quality = 49;
 
+        // Act
+        _app.UpdateQuality();
+
+        // Assert
+        Assert.That(brie.Quality, Is.LessThanOrEqualTo(50));
+
+        // Act again to verify it won't go over 50
+        _app.UpdateQuality();
+
+        // Assert again
+        Assert.That(brie.Quality, Is.EqualTo(50));
+    }
+
+    [Test]
+    public void QualityShouldNeverBeNegative()
+    {
+        // Arrange: Set the Dexterity Vests quality to 1
+        var vest = _items[0];
+        vest.Quality = 1;
+
+        // Act
+        _app.UpdateQuality();
+
+        // Assert
+        Assert.That(vest.Quality, Is.GreaterThanOrEqualTo(0));
+
+        // Act again to verify it won't go below 0
+        _app.UpdateQuality();
+
+        // Assert again
+        Assert.That(vest.Quality, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void SulfurasQualityShouldAlwaysBeEighty()
+    {
+        // Arrange: Sulfuras items
+        var sulfuras1 = _items[3];
+        var sulfuras2 = _items[4];
+
+        // Act
+
+        _app.UpdateQuality();
+        // Assert
+
+        Assert.That(sulfuras1.Quality, Is.EqualTo(80));
+        Assert.That(sulfuras2.Quality, Is.EqualTo(80));
+    }
 }
