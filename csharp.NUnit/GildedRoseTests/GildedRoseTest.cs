@@ -204,6 +204,91 @@ public class GildedRoseTest
     }
 
     [Test]
+    public void BackstagePassQuality_ShouldBeZeroAfterConcert()
+    {
+        // Arrange: Get the Backstage Pass
+        var backstagePass = _items[5];
+
+        // Set SellIn to 0 to simulate the concert day
+        backstagePass.SellIn = 0;
+
+        // Act: Update quality for one day
+        _app.UpdateQuality();
+
+        // Assert: Quality should be 0 after the concert
+        Assert.That(backstagePass.Quality, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void BackstagePassQuality_ShouldIncreaseByOneWhenSellInIsMoreThanTenDays()
+    {
+        // Arrange: Get the Backstage Pass
+        var backstagePass = _items[5];
+
+        // Act: Update quality for one day
+        _app.UpdateQuality();
+
+        // Assert: Quality should increase by 1
+        Assert.That(backstagePass.Quality, Is.EqualTo(21));
+    }
+
+    [Test]
+    public void BackstagePassQuality_ShouldIncreaseByTwoWhenSellInIsLessThanElevenDaysAndMoreThanFiveDays()
+    {
+        // Arrange: Get the Backstage Pass
+        var backstagePass = _items[5];
+        backstagePass.SellIn = 10;
+
+        // Act: Update quality for one day
+        _app.UpdateQuality();
+
+        // Assert
+        Assert.That(backstagePass.Quality, Is.EqualTo(22));
+
+        // Arrange2: Set SellIn to 6 days
+        backstagePass.SellIn = 6;
+
+        // Act2: Update quality for one day
+        _app.UpdateQuality();
+
+        // Assert2: Quality should increase by 2
+        Assert.That(backstagePass.Quality, Is.EqualTo(24));
+    }
+
+    [Test]
+    public void BackstagePassQuality_ShouldIncreaseByThreeWhenSellInIsLessThanSixAndMoreThanZero()
+    {
+        // Arrange
+        var backstagePass = _items[5];
+        backstagePass.SellIn = 5;
+
+        // Act 1
+        _app.UpdateQuality();
+
+        // Assert 1
+        Assert.That(backstagePass.Quality, Is.EqualTo(23));
+
+        // Act 2
+        backstagePass.SellIn = 1;
+        _app.UpdateQuality();
+
+        // Assert
+        Assert.That(backstagePass.Quality, Is.EqualTo(26));
+    }
+
+    [Test]
+    public void BackstagePassQuality_ShouldBeZeroAfterTheConcert()
+    {
+        // Arrange
+        var backstagePass = _items[5];
+        backstagePass.SellIn = 0;
+
+        // Act
+        _app.UpdateQuality();
+
+        // Assert
+        Assert.That(backstagePass.Quality, Is.EqualTo(0));
+    }
 
 
 
