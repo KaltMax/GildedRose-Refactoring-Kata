@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using GildedRoseKata;
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 namespace GildedRoseTests;
 
@@ -193,6 +192,20 @@ public class GildedRoseTest
     }
 
     [Test]
+    public void VestOfDexteritySellIn_ShouldDecreaseByOneEveryDay()
+    {
+        // Arrange: Get the Dexterity Vest and store initial SellIn
+        var vest = _items[0];
+        var initialSellIn = vest.SellIn;
+
+        // Act
+        _app.UpdateQuality();
+
+        // Assert: SellIn should be reduced by 1
+        Assert.That(vest.SellIn, Is.EqualTo(initialSellIn - 1));
+    }
+
+    [Test]
     public void AgedBrieQuality_ShouldIncreaseByOneADay()
     {
         // Arrange: Get the Aged Brie
@@ -240,6 +253,20 @@ public class GildedRoseTest
     }
 
     [Test]
+    public void AgedBrieSellIn_ShouldDecreaseByOneEveryDay()
+    {
+        // Arrange: Get the Aged Brie and store initial SellIn
+        var brie = _items[1];
+        var initialSellIn = brie.SellIn;
+
+        // Act
+        _app.UpdateQuality();
+
+        // Assert: SellIn should be reduced by 1
+        Assert.That(brie.SellIn, Is.EqualTo(initialSellIn - 1));
+    }
+
+    [Test]
     public void ElixirOfTheMongooseQuality_ShouldDegradeTwiceAsFastOnceSellDateHasPassed()
     {
         // Arrange
@@ -268,6 +295,20 @@ public class GildedRoseTest
 
         // Assert: Quality should be reduced by 1
         Assert.That(elixir.Quality, Is.EqualTo(initialElixirQuality - 1));
+    }
+
+    [Test]
+    public void ElixirOfTheMongooseSellIn_ShouldDecreaseByOneEveryDay()
+    {
+        // Arrange: Get the Elixir of the Mongoose and store initial SellIn
+        var elixir = _items[2];
+        var initialSellIn = elixir.SellIn;
+
+        // Act
+        _app.UpdateQuality();
+
+        // Assert: SellIn should be reduced by 1
+        Assert.That(elixir.SellIn, Is.EqualTo(initialSellIn - 1));
     }
 
     [Test]
@@ -349,5 +390,19 @@ public class GildedRoseTest
 
         // Assert
         Assert.That(backstagePass.Quality, Is.EqualTo(initialQualityBackstagePass + 3));
+    }
+
+    [Test]
+    public void BackstagePassSellIn_ShouldDecreaseByOneEveryDay()
+    {
+        // Arrange: Get the Backstage Pass and store initial SellIn
+        var backstagePass = _items[5];
+        var initialSellIn = backstagePass.SellIn;
+
+        // Act
+        _app.UpdateQuality();
+
+        // Assert: SellIn should be reduced by 1
+        Assert.That(backstagePass.SellIn, Is.EqualTo(initialSellIn - 1));
     }
 }

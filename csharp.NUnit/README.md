@@ -34,11 +34,9 @@ We implemented a comprehensive test suite that covers all business rules from th
 
 3. **Special Item Handling**: Separate tests for each special item type (Aged Brie, Sulfuras, Backstage passes) to verify their unique behaviors.
 
-4. **Time-based Testing**: Tests for changes over multiple days to ensure consistent behavior over time.
+4. **Edge Case Coverage**: Testing combinations of boundary conditions such as quality at limits and sell-by dates.
 
-5. **Edge Case Coverage**: Testing combinations of boundary conditions such as quality at limits and sell-by dates.
-
-6. **Approval Testing**: Using the VerifyNUnit framework to capture and verify the output of running the application over 30 days, helping detect any regressions in overall system behavior.
+5. **Approval Testing**: Using the VerifyNUnit framework to capture and verify the output of running the application over 30 days, helping detect any regressions in overall system behavior.
 
 
 ## Test Categories
@@ -74,7 +72,3 @@ We organized our tests using a clear naming convention that describes the expect
 3. **Testing State Changes**: Items undergo different behaviors based on their current state and type, requiring careful test design to verify all possible combinations.
 
 4. **Special Item Rules**: Each special item type (Aged Brie, Sulfuras, Backstage passes) follows different rules with multiple conditions, requiring detailed testing for each scenario.
-
-5. **Immutable Item Class**: The restriction against modifying the Item class required tests to work around this constraint while still effectively verifying behavior.
-
-6. **Conjured Items**: The specification mentions that "Conjured" items should degrade twice as fast, but this functionality was not yet implemented, creating a conflict between specification and actual behavior.
