@@ -119,7 +119,7 @@ public class GildedRoseTest
     }
 
     [Test]
-    public void SulfurasQualityShouldAlwaysBeEighty()
+    public void SulfurasQuality_ShouldAlwaysBeEighty()
     {
         // Arrange: Sulfuras items
         var sulfuras1 = _items[3];
@@ -133,4 +133,79 @@ public class GildedRoseTest
         Assert.That(sulfuras1.Quality, Is.EqualTo(80));
         Assert.That(sulfuras2.Quality, Is.EqualTo(80));
     }
+
+    [Test]
+    public void VestOfDexterityQuality_ShouldReduceByOneADay()
+    {
+        // Arrange: Get the Dexterity Vest
+        var vest = _items[0];
+
+        // Act: Update quality for one day
+        _app.UpdateQuality();
+
+        // Assert: Quality should be reduced by 1
+        Assert.That(vest.Quality, Is.EqualTo(19));
+
+        // Act again to verify it reduces by 1 each day
+        _app.UpdateQuality();
+
+        // Assert again
+        Assert.That(vest.Quality, Is.EqualTo(18));
+    }
+
+    [Test]
+    public void ElixirOfTheMongooseQuality_ShouldReduceByOneADay()
+    {
+        // Arrange: Get the Elixir of the Mongoose
+        var elixir = _items[2];
+
+        // Act: Update quality for one day
+        _app.UpdateQuality();
+
+        // Assert: Quality should be reduced by 1
+        Assert.That(elixir.Quality, Is.EqualTo(6));
+    }
+
+    [Test]
+    public void AgedBrieQuality_ShouldIncreaseByOneADay()
+    {
+        // Arrange: Get the Aged Brie
+        var brie = _items[1];
+        // Act: Update quality for one day
+        _app.UpdateQuality();
+
+        // Assert: Quality should be increased by 1
+        Assert.That(brie.Quality, Is.EqualTo(1));
+
+        // Act again to verify it increases by 1 each day
+        _app.UpdateQuality();
+
+        // Assert again
+        Assert.That(brie.Quality, Is.EqualTo(2));
+    }
+
+    [Test]
+    public void VestOfDexterityAndElixirOfTheMongooseQuality_ShouldDegradeTwiceAsFastOnceSellDateHasPassed()
+    {
+        // Arrange
+        var vest = _items[0];
+        var elixir = _items[2];
+
+        // Set Sell dates to today
+        vest.SellIn = 0;
+        elixir.SellIn = 0;
+
+        // Act
+        _app.UpdateQuality();
+
+        // Assert
+        Assert.That(vest.Quality, Is.EqualTo(18)); // Reduced by 2
+        Assert.That(elixir.Quality, Is.EqualTo(5)); // Reduced by 2
+    }
+
+    [Test]
+
+
+
+
 }
