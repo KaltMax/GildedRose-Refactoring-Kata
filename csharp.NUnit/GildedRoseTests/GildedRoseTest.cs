@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using GildedRoseKata;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 namespace GildedRoseTests;
 
@@ -52,4 +53,30 @@ public class GildedRoseTest
         app.UpdateQuality();
         Assert.That(items[0].Name, Is.EqualTo("foo"));
     }
+
+    [Test]
+    public void ShouldInitializeItemsCorrectly()
+    {
+        var expectedItems = new List<(string Name, int SellIn, int Quality)>
+        {
+            ("+5 Dexterity Vest", 10, 20),
+            ("Aged Brie", 2, 0),
+            ("Elixir of the Mongoose", 5, 7),
+            ("Sulfuras, Hand of Ragnaros", 0, 80),
+            ("Sulfuras, Hand of Ragnaros", -1, 80),
+            ("Backstage passes to a TAFKAL80ETC concert", 15, 20),
+            ("Backstage passes to a TAFKAL80ETC concert", 10, 49),
+            ("Backstage passes to a TAFKAL80ETC concert", 5, 49),
+            ("Conjured Mana Cake", 3, 6)
+        };
+
+        for (var i = 0; i < _items.Count; i++)
+        {
+            Assert.That(_items[i].Name, Is.EqualTo(expectedItems[i].Name));
+            Assert.That(_items[i].SellIn, Is.EqualTo(expectedItems[i].SellIn));
+            Assert.That(_items[i].Quality, Is.EqualTo(expectedItems[i].Quality));
+        }
+    }
+
+
 }
