@@ -135,6 +135,21 @@ public class GildedRoseTest
     }
 
     [Test]
+    public void SulfurasSellIn_ShouldNeverChange()
+    {
+        // Arrange
+        var sulfuras1 = _items[3];
+        var sulfuras2 = _items[4];
+
+        // Act
+        _app.UpdateQuality();
+
+        // Assert
+        Assert.That(sulfuras1.SellIn, Is.EqualTo(0));
+        Assert.That(sulfuras2.SellIn, Is.EqualTo(-1));
+    }
+
+    [Test]
     public void VestOfDexterityQuality_ShouldReduceByOneADay()
     {
         // Arrange: Get the Dexterity Vest
@@ -310,8 +325,4 @@ public class GildedRoseTest
         // Assert
         Assert.That(backstagePass.Quality, Is.EqualTo(0));
     }
-
-
-
-
 }
