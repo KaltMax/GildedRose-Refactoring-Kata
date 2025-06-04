@@ -171,6 +171,7 @@ public class GildedRoseTest
     {
         // Arrange: Get the Aged Brie
         var brie = _items[1];
+
         // Act: Update quality for one day
         _app.UpdateQuality();
 
@@ -182,6 +183,26 @@ public class GildedRoseTest
 
         // Assert again
         Assert.That(brie.Quality, Is.EqualTo(2));
+    }
+
+    [Test]
+    public void AgedBrieQuality_ShouldIncreaseByTwoAfterSellInDate()
+    {
+        // Arrange: Get the Aged Brie
+        var brie = _items[1];
+        brie.SellIn = 0; // Set SellIn to 0 to simulate the day after sell date
+
+        // Act: Update quality for one day
+        _app.UpdateQuality();
+
+        // Assert: Quality should be increased by 1
+        Assert.That(brie.Quality, Is.EqualTo(2));
+
+        // Act again to verify it increases by 1 each day
+        _app.UpdateQuality();
+
+        // Assert again
+        Assert.That(brie.Quality, Is.EqualTo(4));
     }
 
     [Test]
