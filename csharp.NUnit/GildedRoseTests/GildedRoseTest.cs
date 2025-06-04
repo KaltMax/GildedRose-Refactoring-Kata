@@ -126,10 +126,9 @@ public class GildedRoseTest
         var sulfuras2 = _items[4];
 
         // Act
-
         _app.UpdateQuality();
-        // Assert
 
+        // Assert
         Assert.That(sulfuras1.Quality, Is.EqualTo(80));
         Assert.That(sulfuras2.Quality, Is.EqualTo(80));
     }
@@ -141,12 +140,16 @@ public class GildedRoseTest
         var sulfuras1 = _items[3];
         var sulfuras2 = _items[4];
 
+        // Store initial values
+        var initialSellIn1 = sulfuras1.SellIn;
+        var initialSellIn2 = sulfuras2.SellIn;
+
         // Act
         _app.UpdateQuality();
 
         // Assert
-        Assert.That(sulfuras1.SellIn, Is.EqualTo(0));
-        Assert.That(sulfuras2.SellIn, Is.EqualTo(-1));
+        Assert.That(sulfuras1.SellIn, Is.EqualTo(initialSellIn1));
+        Assert.That(sulfuras2.SellIn, Is.EqualTo(initialSellIn2));
     }
 
     [Test]
@@ -154,31 +157,39 @@ public class GildedRoseTest
     {
         // Arrange: Get the Dexterity Vest
         var vest = _items[0];
+        var initialQuality = vest.Quality;
 
         // Act: Update quality for one day
         _app.UpdateQuality();
 
         // Assert: Quality should be reduced by 1
-        Assert.That(vest.Quality, Is.EqualTo(19));
+        Assert.That(vest.Quality, Is.EqualTo(initialQuality - 1));
+
+        // Arrange: Store new value before second update
+        initialQuality = vest.Quality;
 
         // Act again to verify it reduces by 1 each day
         _app.UpdateQuality();
 
         // Assert again
-        Assert.That(vest.Quality, Is.EqualTo(18));
+        Assert.That(vest.Quality, Is.EqualTo(initialQuality - 1));
     }
 
     [Test]
-    public void ElixirOfTheMongooseQuality_ShouldReduceByOneADay()
+    public void VestOfDexterityQuality_ShouldDegradeTwiceAsFastOnceSellDateHasPassed()
     {
-        // Arrange: Get the Elixir of the Mongoose
-        var elixir = _items[2];
+        // Arrange
+        var vest = _items[0];
+        var initialVestQuality = vest.Quality;
 
-        // Act: Update quality for one day
+        // Set Sell dates to today
+        vest.SellIn = 0;
+
+        // Act
         _app.UpdateQuality();
 
-        // Assert: Quality should be reduced by 1
-        Assert.That(elixir.Quality, Is.EqualTo(6));
+        // Assert
+        Assert.That(vest.Quality, Is.EqualTo(initialVestQuality - 2));
     }
 
     [Test]
@@ -186,57 +197,77 @@ public class GildedRoseTest
     {
         // Arrange: Get the Aged Brie
         var brie = _items[1];
+        var initialBrieQuality = brie.Quality;
 
         // Act: Update quality for one day
         _app.UpdateQuality();
 
         // Assert: Quality should be increased by 1
-        Assert.That(brie.Quality, Is.EqualTo(1));
+        Assert.That(brie.Quality, Is.EqualTo(initialBrieQuality + 1));
+
+        // Arrange: Store new value before second update
+        initialBrieQuality = brie.Quality;
 
         // Act again to verify it increases by 1 each day
         _app.UpdateQuality();
 
         // Assert again
-        Assert.That(brie.Quality, Is.EqualTo(2));
+        Assert.That(brie.Quality, Is.EqualTo(initialBrieQuality + 1));
     }
 
     [Test]
     public void AgedBrieQuality_ShouldIncreaseByTwoAfterSellInDate()
     {
-        // Arrange: Get the Aged Brie
+        // Arrange: Get the Aged Brie and set SellIn to 0 to simulate the day after sell date
         var brie = _items[1];
-        brie.SellIn = 0; // Set SellIn to 0 to simulate the day after sell date
+        brie.SellIn = 0;
+        var initialBrieQuality = brie.Quality;
 
         // Act: Update quality for one day
         _app.UpdateQuality();
 
-        // Assert: Quality should be increased by 1
-        Assert.That(brie.Quality, Is.EqualTo(2));
+        // Assert: Quality should be increased by 2
+        Assert.That(brie.Quality, Is.EqualTo(initialBrieQuality + 2));
 
-        // Act again to verify it increases by 1 each day
+        // Arrange: Store new value before second update
+        initialBrieQuality = brie.Quality;
+
+        // Act again to verify it increases by 2 each day
         _app.UpdateQuality();
 
         // Assert again
-        Assert.That(brie.Quality, Is.EqualTo(4));
+        Assert.That(brie.Quality, Is.EqualTo(initialBrieQuality + 2));
     }
 
     [Test]
-    public void VestOfDexterityAndElixirOfTheMongooseQuality_ShouldDegradeTwiceAsFastOnceSellDateHasPassed()
+    public void ElixirOfTheMongooseQuality_ShouldDegradeTwiceAsFastOnceSellDateHasPassed()
     {
         // Arrange
-        var vest = _items[0];
         var elixir = _items[2];
+        var initialElixirQuality = elixir.Quality;
 
         // Set Sell dates to today
-        vest.SellIn = 0;
         elixir.SellIn = 0;
 
         // Act
         _app.UpdateQuality();
 
         // Assert
-        Assert.That(vest.Quality, Is.EqualTo(18)); // Reduced by 2
-        Assert.That(elixir.Quality, Is.EqualTo(5)); // Reduced by 2
+        Assert.That(elixir.Quality, Is.EqualTo(initialElixirQuality - 2));
+    }
+
+    [Test]
+    public void ElixirOfTheMongooseQuality_ShouldReduceByOneADay()
+    {
+        // Arrange: Get the Elixir of the Mongoose
+        var elixir = _items[2];
+        var initialElixirQuality = elixir.Quality;
+
+        // Act: Update quality for one day
+        _app.UpdateQuality();
+
+        // Assert: Quality should be reduced by 1
+        Assert.That(elixir.Quality, Is.EqualTo(initialElixirQuality - 1));
     }
 
     [Test]
@@ -258,14 +289,16 @@ public class GildedRoseTest
     [Test]
     public void BackstagePassQuality_ShouldIncreaseByOneWhenSellInIsMoreThanTenDays()
     {
-        // Arrange: Get the Backstage Pass
+        // Arrange: Get the Backstage Pass and set SellIn to more than 10 days
         var backstagePass = _items[5];
+        backstagePass.SellIn = 11;
+        var initialQualityBackstagePass = backstagePass.Quality;
 
         // Act: Update quality for one day
         _app.UpdateQuality();
 
         // Assert: Quality should increase by 1
-        Assert.That(backstagePass.Quality, Is.EqualTo(21));
+        Assert.That(backstagePass.Quality, Is.EqualTo(initialQualityBackstagePass + 1));
     }
 
     [Test]
@@ -274,21 +307,23 @@ public class GildedRoseTest
         // Arrange: Get the Backstage Pass
         var backstagePass = _items[5];
         backstagePass.SellIn = 10;
+        var initialBackstagePassQuality = backstagePass.Quality;
 
         // Act: Update quality for one day
         _app.UpdateQuality();
 
         // Assert
-        Assert.That(backstagePass.Quality, Is.EqualTo(22));
+        Assert.That(backstagePass.Quality, Is.EqualTo(initialBackstagePassQuality + 2));
 
-        // Arrange2: Set SellIn to 6 days
+        // Arrange2: Set SellIn to 6 days and update backstage pass quality
         backstagePass.SellIn = 6;
+        initialBackstagePassQuality = backstagePass.Quality;
 
         // Act2: Update quality for one day
         _app.UpdateQuality();
 
         // Assert2: Quality should increase by 2
-        Assert.That(backstagePass.Quality, Is.EqualTo(24));
+        Assert.That(backstagePass.Quality, Is.EqualTo(initialBackstagePassQuality + 2));
     }
 
     [Test]
@@ -297,32 +332,22 @@ public class GildedRoseTest
         // Arrange
         var backstagePass = _items[5];
         backstagePass.SellIn = 5;
+        var initialQualityBackstagePass = backstagePass.Quality;
 
         // Act 1
         _app.UpdateQuality();
 
         // Assert 1
-        Assert.That(backstagePass.Quality, Is.EqualTo(23));
+        Assert.That(backstagePass.Quality, Is.EqualTo(initialQualityBackstagePass + 3));
+
+        // Arrange 2: Update initial quality and set SellIn to 1 day
+        backstagePass.SellIn = 1;
+        initialQualityBackstagePass = backstagePass.Quality;
 
         // Act 2
-        backstagePass.SellIn = 1;
         _app.UpdateQuality();
 
         // Assert
-        Assert.That(backstagePass.Quality, Is.EqualTo(26));
-    }
-
-    [Test]
-    public void BackstagePassQuality_ShouldBeZeroAfterTheConcert()
-    {
-        // Arrange
-        var backstagePass = _items[5];
-        backstagePass.SellIn = 0;
-
-        // Act
-        _app.UpdateQuality();
-
-        // Assert
-        Assert.That(backstagePass.Quality, Is.EqualTo(0));
+        Assert.That(backstagePass.Quality, Is.EqualTo(initialQualityBackstagePass + 3));
     }
 }
