@@ -23,21 +23,23 @@ public class GildedRose
 
     private void UpdateItemQuality(Item item)
     {
-        if (item.Name == "Aged Brie")
+        switch (item.Name)
         {
-            IncreaseQuality(item);
-        }
-        else if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
-        {
-            UpdateBackstagePassesQuality(item);
-        }
-        else if (item.Name == "Conjured Mana Cake")
-        {
-            DecreaseQuality(item, 2);
-        }
-        else if (item.Name != "Sulfuras, Hand of Ragnaros")
-        {
-            DecreaseQuality(item, 1);
+            case "Aged Brie":
+                IncreaseQuality(item);
+                break;
+            case "Backstage passes to a TAFKAL80ETC concert":
+                UpdateBackstagePassesQuality(item);
+                break;
+            case "Conjured Mana Cake":
+                DecreaseQuality(item, 2);
+                break;
+            case "Sulfuras, Hand of Ragnaros":
+                // Sulfuras does not need to be updated
+                break;
+            default:
+                DecreaseQuality(item, 1);
+                break;
         }
     }
 
@@ -58,7 +60,7 @@ public class GildedRose
     {
         if (item.Name != "Sulfuras, Hand of Ragnaros")
         {
-            item.SellIn = item.SellIn - 1;
+            item.SellIn -= 1;
         }
     }
 
@@ -69,21 +71,23 @@ public class GildedRose
             return;
         }
 
-        if (item.Name == "Aged Brie")
+        switch (item.Name)
         {
-            IncreaseQuality(item);
-        }
-        else if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
-        {
-            item.Quality = 0;
-        }
-        else if (item.Name == "Conjured Mana Cake")
-        {
-            DecreaseQuality(item, 2);
-        }
-        else if (item.Name != "Sulfuras, Hand of Ragnaros")
-        {
-            DecreaseQuality(item, 1);
+            case "Aged Brie":
+                IncreaseQuality(item);
+                break;
+            case "Backstage passes to a TAFKAL80ETC concert":
+                item.Quality = 0;
+                break;
+            case "Conjured Mana Cake":
+                DecreaseQuality(item, 2);
+                break;
+            case "Sulfuras, Hand of Ragnaros":
+                // Sulfuras does not change
+                break;
+            default:
+                DecreaseQuality(item, 1);
+                break;
         }
     }
 
@@ -91,7 +95,7 @@ public class GildedRose
     {
         if (item.Quality < 50)
         {
-            item.Quality = item.Quality + 1;
+            item.Quality += 1;
         }
     }
 
@@ -99,7 +103,7 @@ public class GildedRose
     {
         if (item.Quality > 0)
         {
-            item.Quality = item.Quality - amount;
+            item.Quality -= amount;
             if (item.Quality < 0)
             {
                 item.Quality = 0;
