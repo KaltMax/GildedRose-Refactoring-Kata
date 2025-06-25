@@ -4,40 +4,62 @@ namespace GildedRoseKata;
 
 public class GildedRose
 {
-    IList<Item> Items;
+    private readonly IList<Item> _items;
+    private const int MaxQuality = 50;
+    private const int MinQuality = 0;
+    private const int SulfurasQuality = 80;
 
-    public GildedRose(IList<Item> Items)
+    private enum ItemType
     {
-        this.Items = Items;
+        AgedBrie,
+        BackstagePass,
+        Conjured,
+        Sulfuras,
+        Standard
+    }
+
+    public GildedRose(IList<Item> items)
+    {
+        _items = items;
     }
 
     public void UpdateQuality()
     {
-        foreach (var item in Items)
+        foreach (var item in _items)
         {
-            UpdateItemQuality(item);
-            UpdateItemSellIn(item);
-            HandleExpiredItem(item);
+            var itemType = GetItemType(item);
+            UpdateItemQuality(item, itemType);
+            UpdateItemSellIn(item, itemType);
+            HandleExpiredItem(item, itemType);
         }
     }
 
-    private void UpdateItemQuality(Item item)
+    private ItemType GetItemType(Item item)
     {
-        switch (item.Name)
+        if (IsAgedBrie(item)) return ItemType.AgedBrie;
+        if (IsBackstagePass(item)) return ItemType.BackstagePass;
+        if (IsConjured(item)) return ItemType.Conjured;
+        if (IsSulfuras(item)) return ItemType.Sulfuras;
+        return ItemType.Standard;
+    }
+
+    private void UpdateItemQuality(Item item, ItemType itemType)
+    {
+        switch (itemType)
         {
-            case "Aged Brie":
-                IncreaseQuality(item);
+            case ItemType.AgedBrie:
+                IncreaseQuality(item, 1);
                 break;
-            case "Backstage passes to a TAFKAL80ETC concert":
+            case ItemType.BackstagePass:
                 UpdateBackstagePassesQuality(item);
                 break;
-            case "Conjured Mana Cake":
+            case ItemType.Conjured:
                 DecreaseQuality(item, 2);
                 break;
-            case "Sulfuras, Hand of Ragnaros":
-                // Sulfuras does not need to be updated
+            case ItemType.Sulfuras:
+                item.Quality = SulfurasQuality;
                 break;
-            default:
+            case ItemType.Standard:
                 DecreaseQuality(item, 1);
                 break;
         }
@@ -45,69 +67,77 @@ public class GildedRose
 
     private void UpdateBackstagePassesQuality(Item item)
     {
-        IncreaseQuality(item);
+        IncreaseQuality(item, 1);
         if (item.SellIn < 11)
         {
-            IncreaseQuality(item);
+            IncreaseQuality(item, 1);
         }
+
         if (item.SellIn < 6)
         {
-            IncreaseQuality(item);
+            IncreaseQuality(item, 1);
         }
     }
 
-    private void UpdateItemSellIn(Item item)
+    private void UpdateItemSellIn(Item item, ItemType itemType)
     {
-        if (item.Name != "Sulfuras, Hand of Ragnaros")
+        if (itemType != ItemType.Sulfuras)
         {
             item.SellIn -= 1;
         }
     }
 
-    private void HandleExpiredItem(Item item)
+    private void HandleExpiredItem(Item item, ItemType itemType)
     {
         if (item.SellIn >= 0)
         {
             return;
         }
 
-        switch (item.Name)
+        switch (itemType)
         {
-            case "Aged Brie":
-                IncreaseQuality(item);
+            case ItemType.AgedBrie:
+                IncreaseQuality(item, 1);
                 break;
-            case "Backstage passes to a TAFKAL80ETC concert":
+            case ItemType.BackstagePass:
                 item.Quality = 0;
                 break;
-            case "Conjured Mana Cake":
+            case ItemType.Conjured:
                 DecreaseQuality(item, 2);
                 break;
-            case "Sulfuras, Hand of Ragnaros":
+            case ItemType.Sulfuras:
                 // Sulfuras does not change
                 break;
-            default:
+            case ItemType.Standard:
                 DecreaseQuality(item, 1);
                 break;
         }
     }
 
-    private void IncreaseQuality(Item item)
+    private void IncreaseQuality(Item item, int amount)
     {
-        if (item.Quality < 50)
+        item.Quality += amount;
+        if (item.Quality > MaxQuality)
         {
-            item.Quality += 1;
+            item.Quality = MaxQuality;
         }
     }
 
     private void DecreaseQuality(Item item, int amount)
     {
-        if (item.Quality > 0)
+        if (item.Quality > MinQuality)
         {
             item.Quality -= amount;
-            if (item.Quality < 0)
+            if (item.Quality < MinQuality)
             {
-                item.Quality = 0;
+                item.Quality = MinQuality;
             }
         }
     }
+
+    // Helper methods to check item types
+    private bool IsAgedBrie(Item item) => item.Name == "Aged Brie";
+    private bool IsBackstagePass(Item item) => item.Name.ToLower().Contains("backstage passes");
+    private bool IsConjured(Item item) => item.Name.ToLower().Contains("conjured");
+    private bool IsSulfuras(Item item) => item.Name.ToLower().Contains("sulfuras");
 }

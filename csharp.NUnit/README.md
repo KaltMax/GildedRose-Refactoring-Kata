@@ -24,11 +24,12 @@ GildedRose/bin/Debug/net8.0/GildedRose 10
 dotnet test
 ```
 
+
 ## Unit Test Strategy
 
-We implemented a comprehensive test suite that covers all business rules from the Gilded Rose requirements specification. Our test strategy includes:
+We implemented a test suite that covers all business rules from the Gilded Rose requirements specification. Our test strategy includes:
 
-1. **Single Responsibility Tests**: Each test focuses on verifying one specific rule or behavior to ensure clarity and maintainability.
+1. **Single Responsibility Tests**: Each test focuses on verifying one specific rule or behaviour.
 
 2. **Boundary Testing**: We test at the boundaries of the specification (e.g., quality never exceeding 50, quality never negative) to ensure these critical constraints are enforced.
 
@@ -54,11 +55,11 @@ Our unit tests cover these key categories:
 
 3. **Special Items**:
    - **Aged Brie**: Increasing in quality over time, increasing faster after expiration
-   - **Sulfuras**: Quality always remaining at 80, SellIn never changing
-   - **Backstage Passes**: Quality increasing by different rates based on time until concert, dropping to 0 after concert
+   - **Sulfuras**: Quality always remaining at 80, SellIn never changing (applies to any item containing "sulfuras" in its name)
+   - **Backstage Passes**: Quality increasing by different rates based on time until concert, dropping to 0 after concert (applies to any item containing "backstage passes" in its name)
 
 4. **Conjured Items**:
-   - Quality decreasing twice as fast as normal items
+   - Quality decreasing twice as fast as normal items (applies to any item containing "conjured" in its name)
 
 
 ## Test Structure
@@ -69,19 +70,52 @@ We organized our tests using a clear naming convention that describes the expect
 ## Refactoring Decisions
 
 1. **Reading the requirements documentation**: The GildedRoseRequirementsSpecification was crucial for understanding the intended behavior of the system.
+
 2. **Analyzing the Legacy Code**: We carefully examined the original code to identify the core functionalities.
+
 3. **Unit Tests**: Creating unit tests for the existing code helped us understand its behavior and edge cases.
-4. **Refactoring Strategy**: We applied the Single Responsibility Principle, breaking down the complex `UpdateQuality` method into smaller, more manageable helper-methods that handle specific item types and behaviors.
-5. **Fixing the broken Conjured Item feature**: Created failing Unit Tests for the broken feature and implemented the necessary logic to handle Conjured items correctly, ensuring they degrade in quality twice as fast as normal items.
-6. **Refactoring for better readability**: Simplified the conditional logic by exchanging long if-else statements with switch expressions and using compound assignment instead of multiple assignments for clarity.
-7. **Additional Unit Tests**: Added an additional Unit Test to cover the whole code base.
+
+4. **Refactoring Strategy**: We applied the Single Responsibility Principle, breaking down the complex `UpdateQuality` method into smaller, more manageable helper-methods that handle specific item types and behaviours.
+
+5. **Type-Based Item Processing**: Introduced an `ItemType` enum to categorize items more clearly and make the code more maintainable compared to string based switching.
+
+6. **Constant Values**: Added named constants for important values (`MaxQuality`, `MinQuality`, `SulfurasQuality`) to eliminate magic numbers and improve code clarity.
+
+7. **Parameterized Quality Adjustments**: Enhanced quality modification methods to accept amount parameters, making them more versatile and reducing code duplication.
+
+8. **Fixing the Conjured Item feature**: Implemented proper handling of Conjured items with dedicated type recognition and ensuring they degrade in quality twice as fast as normal items.
+
+9. **Flexible item identification**: Replaced exact name matching with partial, case-insensitive string comparison for item categories (Backstage passes, Conjured items, Sulfuras). These changes make it possible to add new items later on without the need for extensive code changes.
+
+10. **Immutability Improvements**: Used `readonly` modifiers for fields to prevent accidental modification and improve design.
+
+
+## Implementation Structure
+
+The refactored implementation follows a clean separation of concerns:
+
+1. **Item Type Detection**: Centralized logic for determining item types in `GetItemType` method with helper methods for each special type
+   
+2. **Quality Management**: Dedicated methods to handle quality increases and decreases with proper boundary checking
+
+3. **Processing Flow**: Three-stage processing for each item:
+   - `UpdateItemQuality`: Updates quality based on item type
+   - `UpdateItemSellIn`: Updates the sell-by date
+   - `HandleExpiredItem`: Applies special rules for expired items
+
+4. **Type Flexibility**: String pattern matching rather than exact matches for better extendability.
+
 
 ## Challenges Faced
 
 ### Refactoring
 
-1. **Legacy Code Understanding**: The most significant challenge was comprehending what the code actually did without clear documentation. The GildedRoseRequirementSpecification was essential for understanding the intended behavior.
+1. **Legacy Code Understanding**: The most significant challenge was comprehending what the code actually did without clear documentation. The GildedRoseRequirementSpecification was essential for quickly understanding the intended behavior.
+
 2. **Complex Conditional Logic**: The nested if-statements in the original code made it challenging to identify all edge cases and ensure complete test coverage.
+
 3. **Testing State Changes**: Items undergo different behaviors based on their current state and type, requiring careful test design to verify all possible combinations.
+
 4. **Special Item Rules**: Each special item type (Aged Brie, Sulfuras, Backstage passes) follows different rules with multiple conditions, requiring detailed testing for each scenario.
-5. **Conjured Items**: Introducing the new category of conjured items required careful integration with existing logic while ensuring all rules were correctly applied. Furthermore, the original ApprovalTest had to be adjusted.
+
+5. **Conjured Items**: Introducing the new category of conjured items required careful integration with existing logic while ensuring all rules were correctly applied.
