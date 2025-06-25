@@ -57,18 +57,31 @@ Our unit tests cover these key categories:
    - **Sulfuras**: Quality always remaining at 80, SellIn never changing
    - **Backstage Passes**: Quality increasing by different rates based on time until concert, dropping to 0 after concert
 
+4. **Conjured Items**:
+   - Quality decreasing twice as fast as normal items
+
 
 ## Test Structure
 
 We organized our tests using a clear naming convention that describes the expected behavior, making it easy to identify failures and understand what each test is verifying. Most tests follow an Arrange-Act-Assert pattern with descriptive comments to enhance readability.
 
 
+## Refactoring Decisions
+
+1. **Reading the requirements documentation**: The GildedRoseRequirementsSpecification was crucial for understanding the intended behavior of the system.
+2. **Analyzing the Legacy Code**: We carefully examined the original code to identify the core functionalities.
+3. **Unit Tests**: Creating unit tests for the existing code helped us understand its behavior and edge cases.
+4. **Refactoring Strategy**: We applied the Single Responsibility Principle, breaking down the complex `UpdateQuality` method into smaller, more manageable helper-methods that handle specific item types and behaviors.
+5. **Fixing the broken Conjured Item feature**: Created failing Unit Tests for the broken feature and implemented the necessary logic to handle Conjured items correctly, ensuring they degrade in quality twice as fast as normal items.
+6. **Refactoring for better readability**: Simplified the conditional logic by exchanging long if-else statements with switch expressions and using compound assignment instead of multiple assignments for clarity.
+7. **Additional Unit Tests**: Added an additional Unit Test to cover the whole code base.
+
 ## Challenges Faced
 
+### Refactoring
+
 1. **Legacy Code Understanding**: The most significant challenge was comprehending what the code actually did without clear documentation. The GildedRoseRequirementSpecification was essential for understanding the intended behavior.
-
 2. **Complex Conditional Logic**: The nested if-statements in the original code made it challenging to identify all edge cases and ensure complete test coverage.
-
 3. **Testing State Changes**: Items undergo different behaviors based on their current state and type, requiring careful test design to verify all possible combinations.
-
 4. **Special Item Rules**: Each special item type (Aged Brie, Sulfuras, Backstage passes) follows different rules with multiple conditions, requiring detailed testing for each scenario.
+5. **Conjured Items**: Introducing the new category of conjured items required careful integration with existing logic while ensuring all rules were correctly applied. Furthermore, the original ApprovalTest had to be adjusted.
