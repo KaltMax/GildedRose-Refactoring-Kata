@@ -102,6 +102,7 @@ public class GildedRoseTest
     {
         // Arrange: Set the Dexterity Vests quality to 1
         var vest = _items[0];
+        vest.SellIn = 0;
         vest.Quality = 1;
 
         // Act
@@ -442,5 +443,20 @@ public class GildedRoseTest
 
         // Assert
         Assert.That(conjuredItem.Quality, Is.EqualTo(initialQuality - 4));
+    }
+
+    [Test]
+    public void ConjuredItemsQuality_ShouldNeverBeUnderZero()
+    {
+        // Arrange: Get the Conjured Mana Cake and set Quality to 1
+        var conjuredItem = _items[8];
+        conjuredItem.SellIn = 0; // Set SellIn to 0 to simulate the day after sell date
+        conjuredItem.Quality = 1;
+
+        // Act: Update quality for one day
+        _app.UpdateQuality();
+
+        // Assert: Quality should be 0 after the update
+        Assert.That(conjuredItem.Quality, Is.EqualTo(0));
     }
 }
