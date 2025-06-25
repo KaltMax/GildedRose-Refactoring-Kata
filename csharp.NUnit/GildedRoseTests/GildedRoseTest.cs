@@ -405,4 +405,42 @@ public class GildedRoseTest
         // Assert: SellIn should be reduced by 1
         Assert.That(backstagePass.SellIn, Is.EqualTo(initialSellIn - 1));
     }
+
+    [Test]
+    public void ConjuredItemsQuality_ShouldDegradeTwiceAsFastAsNormalItems()
+    {
+        // Arrange: Get the Conjured Mana Cake
+        var conjuredItem = _items[8];
+        var initialQuality = conjuredItem.Quality;
+
+        // Act: Update quality for one day
+        _app.UpdateQuality();
+
+        // Assert: Quality should be reduced by 2
+        Assert.That(conjuredItem.Quality, Is.EqualTo(initialQuality - 2));
+
+        // Arrange: Store new value before second update
+        initialQuality = conjuredItem.Quality;
+
+        // Act again to verify it reduces by 2 each day
+        _app.UpdateQuality();
+
+        // Assert again
+        Assert.That(conjuredItem.Quality, Is.EqualTo(initialQuality - 2));
+    }
+
+    [Test]
+    public void ConjuredItemsQuality_ShouldDegradeTwiceAsFastAfterSellInDate()
+    {
+        // Arrange : Get the Conjured Mana Cake and set SellIn to 0
+        var conjuredItem = _items[8];
+        conjuredItem.SellIn = 0;
+        var initialQuality = conjuredItem.Quality;
+
+        // Act: Update quality for one day
+        _app.UpdateQuality();
+
+        // Assert
+        Assert.That(conjuredItem.Quality, Is.EqualTo(initialQuality - 4));
+    }
 }
