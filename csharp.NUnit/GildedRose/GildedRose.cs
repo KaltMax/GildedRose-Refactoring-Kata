@@ -31,6 +31,10 @@ public class GildedRose
         {
             UpdateBackstagePassesQuality(item);
         }
+        else if (item.Name == "Conjured Mana Cake")
+        {
+            DecreaseQuality(item, 2);
+        }
         else if (item.Name != "Sulfuras, Hand of Ragnaros")
         {
             DecreaseQuality(item, 1);
@@ -72,6 +76,10 @@ public class GildedRose
         else if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
         {
             item.Quality = 0;
+        }
+        else if (item.Name == "Conjured Mana Cake")
+        {
+            DecreaseQuality(item, 2);
         }
         else if (item.Name != "Sulfuras, Hand of Ragnaros")
         {
